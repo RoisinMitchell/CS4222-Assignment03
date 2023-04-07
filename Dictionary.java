@@ -13,27 +13,36 @@ public class Dictionary {
         try {
             Scanner dataSource = new Scanner(new File(filepath));
             wordToken = dataSource.next();
-            //Initialising array with first word, checking if it is within correct range
+            //Initialising array with first word, ignoring words not in specified range
             boolean result = false;
             while (result == false) {
-                if (wordToken.length()-1 <= shortest) {
+                if (wordToken.length() <= shortest) {
                     wordToken = dataSource.next();
-                } else if (wordToken.length()-1 > longest) {
+                } else if (wordToken.length() > longest) {
                     wordToken = dataSource.next();
                 } else {
                     words.add(wordToken.toUpperCase());
                     result = true;
                 }
             }
-
+            //
             while(dataSource.hasNext()) {
-                wordToken = dataSource.next();
-                int searchIndex = Collections.binarySearch(words, wordToken);
-                if(searchIndex < 0){
-                    searchIndex = ((searchIndex) * -1) - 1;
-                    words.add(searchIndex, wordToken);
+                wordToken = dataSource.next().toUpperCase();
+                String[] parsedWords = wordToken.split(",");
+
+
+                for(int i = 0; i <= parsedWords.length-1; i++) {
+                    int searchIndex = Collections.binarySearch(words, parsedWords[i]);
+                    if (searchIndex < 0) {
+                        searchIndex = ((searchIndex) * -1) - 1;
+                        if (wordToken.length() >= shortest && wordToken.length() <= longest) {
+                            words.add(searchIndex, parsedWords[i].trim());
+                        }
+
+                    }
                 }
             }
+
         }catch(IOException e) {
             System.out.println("Error!");
         }
