@@ -4,7 +4,7 @@
  Author      : Roisin Mitchell
  ID          : 21193762
  Description : A dictionary class with methods to read csv file and add
-               or remove words dependent on parameters passed.
+               words dependent on parameters passed.
  ============================================================================
 
   I am assuming from the brief that I am loading a dictionary
@@ -12,29 +12,42 @@
  */
 
 
-import java.io.*; // for File
-import java.util.*; // for Scanner
+import java.io.*;
+import java.util.*;
 
 public class Dictionary {
-    public ArrayList<String> Dictionary(String filepath, int shortest, int longest){
+    private int inputShort;
+    private int inputLong;
+    private ArrayList<String> words;
+    public Dictionary(String filepath, int shortest, int longest){
         //Initialising arraylist that is returned by this method
-        ArrayList<String> words = new ArrayList<String>();
+        words = new ArrayList<>();
+
+        inputLong = longest; //to be used in add method
+        inputShort = shortest; //to be used in add method
 
         try {
+            //reading data from the given file
             Scanner dataSource = new Scanner(new File(filepath));
-            String word = "";
+            String word;
             String[] parsedWords;
 
+            //looping until all words have been read from the file
             while(dataSource.hasNext()) {
                 //Changing each token read in to uppercase
                 word = dataSource.next().toUpperCase();
+                //splitting the word string to get individual words
                 parsedWords = word.split(",");
+                //looping over all parsedWords entries
                 for(int i = 0; i <= parsedWords.length-1; i++) {
+                    //trimming word of any spaces
                     String parsedWord = parsedWords[i].trim();
                     int index = Collections.binarySearch(words, parsedWord);
+                    //if the word isn't already in the arraylist
                     if (index < 0) {
                         //binarySearch() returns the location as a negative value offset by +1
                         index = ((index) * -1) - 1;
+
                         if (parsedWord.length() >= shortest && parsedWord.length() <= longest) {
                             //Adding word to arraylist trimmed of spaces
                                 words.add(index, parsedWord);
@@ -42,9 +55,50 @@ public class Dictionary {
                     }
                 }
             }
+            //handling the exception thrown if file cannot be read
         }catch(IOException e) {
             System.out.println("Cannot Read File!");
         }
+    }
+
+    public boolean add(String word){
+        boolean result = false;
+        //getting the uppercase version of the user input and trimming it of spaces
+        String userWord = word.toUpperCase().trim();
+        int index = Collections.binarySearch(words, userWord);
+        //if the word isn't already in the arraylist
+        if (index < 0) {
+            //binarySearch() returns the location as a negative value offset by +1
+            index = ((index) * -1) - 1;
+            if (userWord.length() >= inputShort && userWord.length() <= inputLong) {
+                //Adding word to arraylist trimmed of spaces
+                words.add(index, userWord);
+                //setting the result to true to indicate successful addition
+                result = true;
+            }
+        }
+        return result;
+    }
+
+    //method to get a random word from the dictionary
+    public String nextWord(){
+        //Generating a random index within the range of the arraylist size
+        int index = (int)(Math.random() * words.size());
+        return words.get(index);
+    }
+
+    public boolean inDictionary(String word){
+        boolean wordResult = false;
+        String inputWord = word.toUpperCase().trim();
+        int index = Collections.binarySearch(words, inputWord);
+        if (index >= 0) {
+            wordResult = true;
+            }
+        return wordResult;
+    }
+
+    public ArrayList<String> get(){
         return words;
     }
+
 }
