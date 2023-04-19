@@ -16,12 +16,12 @@ import java.io.*;
 import java.util.*;
 
 public class Dictionary {
-    private int inputShort;
-    private int inputLong;
+    private final int inputShort;
+    private final int inputLong;
     private ArrayList<String> words;
     public Dictionary(String filepath, int shortest, int longest){
         //Initialising arraylist that is returned by this method
-        words = new ArrayList<>();
+        words = new ArrayList<String>();
 
         inputLong = longest; //to be used in add method
         inputShort = shortest; //to be used in add method
@@ -58,6 +58,7 @@ public class Dictionary {
             //handling the exception thrown if file cannot be read
         }catch(IOException e) {
             System.out.println("Cannot Read File!");
+            throw new RuntimeException(e);
         }
     }
 
@@ -100,5 +101,4 @@ public class Dictionary {
     public ArrayList<String> get(){
         return words;
     }
-
 }
